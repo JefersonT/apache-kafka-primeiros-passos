@@ -13,6 +13,8 @@ Este projeto foi criado para por em prática o aprendizado referente a Kafka. O 
     $ docker-compose up -d
     ```
 - Abrir a pasta **ecommerce** como projeto Java em sua IDE
+    - Executar a classe *FraudDetectorService*
+    - Executar a classe *SendEmailService*
+    - Executar a classe *LogService*
     - Executar a classe *NewOrderMain*
-    - Executar a classe *FraudDetectorService*.
     

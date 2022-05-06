@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 /*Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
-public class FraudDetectorService {
+public class SendEmailService {
     /*Callse principal*/
     public static void main(String[] args) {
 
@@ -18,7 +18,7 @@ public class FraudDetectorService {
         var consumer = new KafkaConsumer<String, String>(properties());
 
         /*Subscrevendo o consumer criado anteriomete ao Topico*/
-        consumer.subscribe(Collections.singletonList("ECOMMERCE_NEW_ORDER"));
+        consumer.subscribe(Collections.singletonList("ECOMMERCE_SEND_EMAIL"));
 
         /*Loop para manter o consumer executando e recebendo os eventos do Producer*/
         while (true) {
@@ -63,7 +63,7 @@ public class FraudDetectorService {
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
         /*defini o id group para que ele possa receber as mensagem, id igual o nome do método*/
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, FraudDetectorService.class.getSimpleName());
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, SendEmailService.class.getSimpleName());
         return properties;
     }
 }

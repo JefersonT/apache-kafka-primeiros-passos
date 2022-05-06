@@ -23,10 +23,12 @@ public class NewOrderMain {
 
         /*Declarando uma variável com Valor da mensagem, e neste caso também é a chave*/
         var value = "12313242, 32423423, 5768578685";
+        var email = "Thanks You for your new Order!";
 
         /*Declarando uma variável com um novo produtor de registro que deve receber como parametro o topico, a chave e a mensagem
         * existem diversas override do método para se implementado*/
         var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", value, value);
+        var sendEmail = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", email, email);
 
         /*Declarando variável de callback para o envio de ProducerRecord*/
         Callback callback = (data, ex) -> {
@@ -42,6 +44,7 @@ public class NewOrderMain {
         /*Realizando o envio do ProducerRecord pelo producer
         * e uma variável de callback para tratar as exceptions ou dados retornados do producer.send*/
         producer.send(record, callback).get();// como o send é assincrono utilizamos o .get() para esperar a feture terminar
+        producer.send(sendEmail, callback).get();// como o send é assincrono utilizamos o .get() para esperar a feture terminar
     }
 
     /*Criando classe de propriedades para o Producer*/
