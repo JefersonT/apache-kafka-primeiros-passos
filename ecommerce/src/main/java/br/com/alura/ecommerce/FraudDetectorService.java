@@ -7,32 +7,33 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.UUID;
 
-/*Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
+/* Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
 public class FraudDetectorService {
-    /*Callse principal*/
+    /* Callse principal*/
     public static void main(String[] args) {
 
-        /*Definindo um variável que recebe um Kafka Consumer, que tem como parametros suas propriedades defininas
+        /* Definindo um variável que recebe um Kafka Consumer, que tem como parametros suas propriedades defininas
         * no método properties*/
         var consumer = new KafkaConsumer<String, String>(properties());
 
-        /*Subscrevendo o consumer criado anteriomete ao Topico*/
+        /* Subscrevendo o consumer criado anteriomete ao Topico*/
         consumer.subscribe(Collections.singletonList("ECOMMERCE_NEW_ORDER"));
 
-        /*Loop para manter o consumer executando e recebendo os eventos do Producer*/
+        /* Loop para manter o consumer executando e recebendo os eventos do Producer*/
         while (true) {
 
-            /*o consumer.poll irá perguntar se tem mensagem a receber durante 100 milisegundos
+            /* o consumer.poll irá perguntar se tem mensagem a receber durante 100 milisegundos
             * o resultado será setado na variável records */
             var records = consumer.poll(Duration.ofMillis(100));
 
-            /*se records possuir algum registro*/
+            /* se records possuir algum registro*/
             if (!records.isEmpty()) {
-                /*printa a quantidade de registros*/
+                /* printa a quantidade de registros*/
                 System.out.println("Encontrei" + records.count() + "Registros");
 
-                /*Percorre o records e imprime as informações de cada registro*/
+                /* Percorre o records e imprime as informações de cada registro*/
                 for (var record : records) {
                     System.out.println("-----------------------------");
                     System.out.println("Processing new order, cheking for fraud");
@@ -46,24 +47,35 @@ public class FraudDetectorService {
         }
     }
 
-    /*Definindo as propriedades do Consumer*/
+    /* Definindo as propriedades do Consumer*/
     private static Properties properties() {
-        /*Definindo uma variável que recepe um novo Properties()*/
+        /* Definindo uma variável que recepe um novo Properties()*/
         var properties = new Properties();
 
-        /*Setando as configurações de onde o Consumer vai escutar a mensagem = "IP:Porta"*/
+        /* Setando as configurações de onde o Consumer vai escutar a mensagem = "IP:Porta"*/
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 
-        /*Setando os a forma de deserializar a chave
+        /* Setando os a forma de deserializar a chave
         * desconverter bits em string*/
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
-        /*Setando os a forma de deserializar a mensagem
+        /* Setando os a forma de deserializar a mensagem
          * desconverter bits em string*/
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
-        /*defini o id group para que ele possa receber as mensagem, id igual o nome do método*/
+        /* defini o id group para que ele possa receber as mensagem, id igual o nome do método
+         * Este recurso permite a distribuição das mensagnes quando há mais de um consumidor com o mesmo grupo
+         * Desde que haja partições suficiente para a quantidade de consumidores no mesmo grupo
+         * OBS.: A distribuição depende da chave passada no Producer*/
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, FraudDetectorService.class.getSimpleName());
+
+        /* Defini o padrão de nome do consumidor*/
+        properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, FraudDetectorService.class.getSimpleName() + UUID.randomUUID().toString());
+
+
+        /* Esta configuração define com que frequencia de mensagens, o consumer irá commitar as mensagens
+        * Aumentar a frequencia permite reduzir os problemas com rebalanceamento devido a quantidade de mensagens */
+        properties.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1");/* de uma em uma */
         return properties;
     }
 }

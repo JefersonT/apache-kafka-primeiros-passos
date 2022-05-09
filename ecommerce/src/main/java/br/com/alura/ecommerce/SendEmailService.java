@@ -62,7 +62,10 @@ public class SendEmailService {
          * desconverter bits em string*/
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
-        /*defini o id group para que ele possa receber as mensagem, id igual o nome do método*/
+        /*defini o id group para que ele possa receber as mensagem, id igual o nome do método
+        * Este recurso permite a distribuição das mensagnes quando há mais de um consumidor com o mesmo grupo
+        * Desde que haja partições suficiente para a quantidade de consumidores no mesmo grupo
+        * OBS.: A distribuição depende da chave passada no Producer*/
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, SendEmailService.class.getSimpleName());
         return properties;
     }
