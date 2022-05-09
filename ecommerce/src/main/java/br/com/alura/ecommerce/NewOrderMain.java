@@ -16,57 +16,22 @@ public class NewOrderMain {
     /*Classe principal com tratativa de exception referente ao producer.sent().get();*/
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        /*Declarando uma variável que recebe um novo KafkaProducer
-        * responsável pelo envio de mensagens
-        * com dois prarámtros <chave, mensagem>, neste caso strings
-        * iniciado com uma classe properties() contendo as suas propriedades*/
-        var producer= new KafkaProducer<String, String>(properties());
-        for (int i = 0; i < 100; i++) {
-            /*Declarando uma variável com Valor da mensagem*/
-            var key = UUID.randomUUID().toString();/*Chave criada aleatóriamente. Ela irá influênciar na distribuição das mensagens para cada partição do topic*/
-            var value = key + "12313242, 32423423, 5768578685";
-            var email = "Thanks You for your new Order!";
+        /* try para fechar o Producer caso haja alguma exception na execução*/
+        try(var dispatcher = new KafkaDispatcher()) { /* Criando um KafkaDispatcher para cria um Producer*/
+            /* criando 100 mensagens para de nova ordem e e-mail*/
+            for (int i = 0; i < 100; i++) {
+                /*Declarando uma variável com Valor da KEY*/
+                var key = UUID.randomUUID().toString();/*Chave criada aleatóriamente. Ela irá influênciar na distribuição das mensagens para cada partição do topic*/
+                /* Denifindo o valor para o metodo send*/
+                var value = key + "12313242, 32423423, 5768578685";
+                dispatcher.send("ECOMMERCE_NEW_ORDER", key, value);
 
-            /*Declarando uma variável com um novo produtor de registro que deve receber como parametro o topico, a chave e a mensagem
-             * existem diversas override do método para se implementado*/
-            var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);
-            var sendEmail = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", key, email);
-
-            /*Declarando variável de callback para o envio de ProducerRecord*/
-            Callback callback = (data, ex) -> {
-
-                /*Se as exceptions diferente de null imprime a ex*/
-                if (ex != null) {
-                    ex.printStackTrace();
-                    return;
-                }
-                /*se as ex for null imprime os dados de criação da mensagem*/
-                System.out.println("sucesso enviado" + data.topic() + ":::partition" + data.partition() + "/offset" + data.offset() + "/" + data.timestamp());
-            };
-            /*Realizando o envio do ProducerRecord pelo producer
-             * e uma variável de callback para tratar as exceptions ou dados retornados do producer.send*/
-            producer.send(record, callback).get();// como o send é assincrono utilizamos o .get() para esperar a feture terminar
-            producer.send(sendEmail, callback).get();// como o send é assincrono utilizamos o .get() para esperar a feture terminar
+                /* Denifindo o valor para o metodo send*/
+                var email = "Thanks You for your new Order!";
+                dispatcher.send("ECOMMERCE_SEND_EMAIL", key, email);
+            }
         }
     }
 
-    /*Criando classe de propriedades para o Producer*/
-    private static Properties properties() {
-        /*Declarando variável recebendo uma nova Properties()*/
-        var  properties = new Properties();
 
-        /*Setando nas properties as configurações do Producer referente ao BOOTSTRAP SERVER "IP:PORTA"*/
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-
-        /*Setando nas properties as configurações do Producer referente ao método de serialização da chave
-        * responsável por converter a string em bits*/
-        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
-        /*Setando nas properties as configurações do Producer referente ao método de serialização da mensagem
-        * responsável por converter a string em bits*/
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
-        /*retornando a variável com as propriedades*/
-        return properties;
-    }
 }
