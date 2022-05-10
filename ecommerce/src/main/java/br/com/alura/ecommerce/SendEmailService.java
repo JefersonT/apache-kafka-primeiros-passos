@@ -2,6 +2,8 @@ package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+import java.util.Map;
+
 /*Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
 public class SendEmailService {
     /*Callse principal*/
@@ -11,7 +13,11 @@ public class SendEmailService {
         var sendEmail = new SendEmailService();
 
         /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o SendEmailService*/
-        try(var service = new KafkaService(SendEmailService.class.getSimpleName(), "ECOMMERCE_SEND_EMAIL", sendEmail::parse)) {
+        try(var service = new KafkaService(SendEmailService.class.getSimpleName(),
+                "ECOMMERCE_SEND_EMAIL",
+                sendEmail::parse,
+                String.class,
+                Map.of())) {
             service.run();
         }
         

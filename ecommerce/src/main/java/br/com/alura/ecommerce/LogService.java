@@ -1,71 +1,37 @@
 package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /*Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
 public class LogService {
     /*Callse principal*/
     public static void main(String[] args) {
+        /* Definindo um novo LogService para utilizar seu método parse*/
+        var logService = new LogService();
 
         /*Definindo um variável que recebe um Kafka Consumer, que tem como parametros suas propriedades defininas
-        * no método properties*/
-        var consumer = new KafkaConsumer<String, String>(properties());
-
-        /*Subscrevendo o consumer em todos os topicos com inicio ECOMMERCE*/
-        consumer.subscribe(Pattern.compile("ECOMMERCE.*"));
-
-        /*Loop para manter o consumer executando e recebendo os eventos do Producer*/
-        while (true) {
-
-            /*o consumer.poll irá perguntar se tem mensagem a receber durante 100 milisegundos
-            * o resultado será setado na variável records */
-            var records = consumer.poll(Duration.ofMillis(100));
-
-            /*se records possuir algum registro*/
-            if (!records.isEmpty()) {
-                /*printa a quantidade de registros*/
-                System.out.println("Encontrei" + records.count() + "Registros");
-
-                /*Percorre o records e imprime as informações de cada registro*/
-                for (var record : records) {
-                    System.out.println("-----------------------------");
-                    System.out.println("Processing new order, cheking for fraud");
-                    System.out.println("Topico: " + record.topic());// imprime o topico
-                    System.out.println("Chave: " + record.key());// imprime a chave
-                    System.out.println("Mensage: " + record.value());// imprime a value
-                    System.out.println("Offset: " + record.offset());// imprime offset
-                    System.out.println("Partition: " + record.partition());// imprime a partition
-                }
-            }
-
+        * no método properties. Subscrevendo o consumer em todos os topicos com inicio ECOMMERCE*/
+        try (var consumer = new KafkaService(LogService.class.getSimpleName(),
+                Pattern.compile("ECOMMERCE.*"),
+                logService::parse,
+                String.class,
+                Map.of(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName()))) {
+            consumer.run();
         }
     }
 
-    /*Definindo as propriedades do Consumer*/
-    private static Properties properties() {
-        /*Definindo uma variável que recepe um novo Properties()*/
-        var properties = new Properties();
-
-        /*Setando as configurações de onde o Consumer vai escutar a mensagem = "IP:Porta"*/
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-
-        /*Setando os a forma de deserializar a chave
-        * desconverter bits em string*/
-        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-
-        /*Setando os a forma de deserializar a mensagem
-         * desconverter bits em string*/
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-
-        /*defini o id group para que ele possa receber as mensagem, id igual o nome do método*/
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, LogService.class.getSimpleName());
-        return properties;
+    private void parse(ConsumerRecord<String, String> record) {
+        System.out.println("-----------------------------");
+        System.out.println("Processing new order, cheking for fraud");
+        System.out.println("Topico: " + record.topic());// imprime o topico
+        System.out.println("Chave: " + record.key());// imprime a chave
+        System.out.println("Mensage: " + record.value());// imprime a value
+        System.out.println("Offset: " + record.offset());// imprime offset
+        System.out.println("Partition: " + record.partition());// imprime a partition
     }
 }

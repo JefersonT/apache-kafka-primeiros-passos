@@ -17,4 +17,26 @@ Este projeto foi criado para por em prática o aprendizado referente a Kafka. O 
     - Executar a classe *SendEmailService*
     - Executar a classe *LogService*
     - Executar a classe *NewOrderMain*
+## Anotações
+- Como configurar os registro de forma permante. 
+    - Para isso é necessário criar novas pastas tanto para os registros do zookeeper como para o kafka.
+    - Acessar o arquivo *config/server.properties* na pasta do kafka e alterar a seguinte linha:
+        **DE**:
+        ```
+        log.dirs=/tmp/kafa-logs
+        ```
+        **PARA**:
+        ```
+        log.dirs=caminho/diretorio/criado/anteriomente/kafka
+        ```
+    - Acessar o arquivo *config/zookeeper.properties* na pasta do kafka e alterar a seguinte linha:
+        **DE**:
+        ```
+        dataDir=/tmp/zookeeper
+        ```
+        **PARA**:
+        ```
+        log.dirs=caminho/diretorio/criado/anteriomente/zookeeper
+        ```
+    - **OBS**.: Neste projeto não há a necessidade de fazer este procedimento, visto que a imagem doker utilizada já possui esta alteração.
     

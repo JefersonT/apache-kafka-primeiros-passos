@@ -10,8 +10,8 @@ import java.io.Closeable;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-class KafkaDispatcher implements Closeable {
-    private final KafkaProducer<String, String> producer;
+class KafkaDispatcher<T> implements Closeable {
+    private final KafkaProducer<String, T> producer;
 
     /* Contrutor*/
     public KafkaDispatcher() {
@@ -36,13 +36,13 @@ class KafkaDispatcher implements Closeable {
 
         /*Setando nas properties as configurações do Producer referente ao método de serialização da mensagem
          * responsável por converter a string em bits*/
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
 
         /*retornando a variável com as propriedades*/
         return properties;
     }
 
-    public void send(String topic, String key, String value) throws ExecutionException, InterruptedException {
+    public void send(String topic, String key, T value) throws ExecutionException, InterruptedException {
         /*Declarando uma variável com um novo produtor de registro que deve receber como parametro o topico, a chave e a mensagem
          * existem diversas override do método para se implementado*/
         var record = new ProducerRecord<>(topic, key, value);

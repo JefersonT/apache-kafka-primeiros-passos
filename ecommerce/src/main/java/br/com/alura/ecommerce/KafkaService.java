@@ -7,23 +7,37 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
-public class KafkaService implements Closeable {
-    private final KafkaConsumer<String, String> consumer;
+public class KafkaService<T> implements Closeable {
+    private final KafkaConsumer<String, T> consumer;
     private final ConsumerFunction parse;
 
     /*Construtor*/
-    public KafkaService(String groupId, String topic, ConsumerFunction parse) {
-        /* Iniciando a variável parse com os parametros passados no método*/
-        this.parse = parse;
-        /* Iniciando a variável que recebe um Kafka Consumer, que tem como parametros suas propriedades defininas
-         * no método properties*/
-        this.consumer = new KafkaConsumer<>(properties(groupId));
+    public KafkaService(String groupId, String topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+        this(parse, groupId, type, properties);
 
         /*Subscrevendo o consumer criado anteriomete ao Topico*/
         consumer.subscribe(Collections.singletonList(topic));
+    }
+
+    public KafkaService(String groupId, Pattern topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+        this(parse, groupId, type, properties);
+
+        /*Subscrevendo o consumer criado anteriomete ao Topico*/
+        consumer.subscribe(topic);
+    }
+
+    public KafkaService(ConsumerFunction parse, String groupId, Class<T> type, Map<String, String> properties) {
+        /* Iniciando a variável parse com os parametros passados no método*/
+        this.parse = parse;
+
+        /* Iniciando a variável que recebe um Kafka Consumer, que tem como parametros suas propriedades defininas
+         * no método properties*/
+        this.consumer = new KafkaConsumer<>(getProperties(type, groupId, properties));
     }
 
     /* Executando o disparo das mensagem*/
@@ -52,7 +66,7 @@ public class KafkaService implements Closeable {
 
 
     /*Definindo as propriedades do Consumer*/
-    private static Properties properties(String groupId) {
+    private Properties getProperties(Class<T> type, String groupId, Map<String, String> overridProperties) {
         /*Definindo uma variável que recepe um novo Properties()*/
         var properties = new Properties();
 
@@ -65,7 +79,7 @@ public class KafkaService implements Closeable {
 
         /*Setando os a forma de deserializar a mensagem
          * desconverter bits em string*/
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, GsonDeserializer.class.getName());
 
         /*defini o id group para que ele possa receber as mensagem, id igual o nome do método
          * Este recurso permite a distribuição das mensagnes quando há mais de um consumidor com o mesmo grupo
@@ -79,6 +93,9 @@ public class KafkaService implements Closeable {
         /* Esta configuração define com que frequencia de mensagens, o consumer irá commitar as mensagens
          * Aumentar a frequencia permite reduzir os problemas com rebalanceamento devido a quantidade de mensagens */
         properties.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1");/* de uma em uma */
+
+        properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
+        properties.putAll(overridProperties);
         return properties;
     }
 
