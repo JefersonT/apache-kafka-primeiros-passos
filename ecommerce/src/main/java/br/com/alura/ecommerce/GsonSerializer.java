@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.kafka.common.serialization.Serializer;
 
-import java.nio.charset.StandardCharsets;
 /* Serializador de Json, que receberar o Order
 *  Herda da classe Serializer para ser identificado como um Serializador*/
 public class GsonSerializer<T> implements Serializer<T> {
@@ -15,7 +14,7 @@ public class GsonSerializer<T> implements Serializer<T> {
     /* Sobrescrevendo o serializador em byte para serializar os recursos em json*/
     @Override
     public byte[] serialize(String s, T object) {
-        /* Primeiro converte o objeto em Json de pois em Bytes*/
+        /* Primeiro converte o objeto em Json depois em Bytes*/
         return gson.toJson(object).getBytes();
     }
 }

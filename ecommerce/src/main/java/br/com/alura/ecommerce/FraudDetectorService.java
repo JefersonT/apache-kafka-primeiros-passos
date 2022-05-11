@@ -6,17 +6,22 @@ import java.util.Map;
 
 /* Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
 public class FraudDetectorService {
-    /* Callse principal*/
+
+    /* Class principal*/
     public static void main(String[] args) {
+
         /* Definindo um novo FraudDetectorService para utilizar seu método parse*/
         var fraudDetector = new FraudDetectorService();
 
-        /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o frouddetector*/
+        /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o frauddetector
+        * o método KafdService<> GroupID, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado */
         try(var service = new KafkaService<>(FraudDetectorService.class.getSimpleName(),
                 "ECOMMERCE_NEW_ORDER",
                 fraudDetector::parse,
                 Order.class,
                 Map.of())) {
+
+            /* Executando o Serviço*/
             service.run();
         }
 
@@ -32,3 +37,4 @@ public class FraudDetectorService {
         System.out.println("Partition: " + record.partition());// imprime a partition
     }
 }
+

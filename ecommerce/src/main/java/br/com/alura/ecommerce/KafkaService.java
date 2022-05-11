@@ -12,8 +12,11 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public class KafkaService<T> implements Closeable {
+public class KafkaService<T> implements Closeable {/*Closeable para podermos implementar o método que fecha o producer*/
+    /* Definindo um Consumer com chave String e Values T*/
     private final KafkaConsumer<String, T> consumer;
+
+    /* Definindo um ConsumerFunction para o parse*/
     private final ConsumerFunction parse;
 
     /*Construtor*/
@@ -94,7 +97,10 @@ public class KafkaService<T> implements Closeable {
          * Aumentar a frequencia permite reduzir os problemas com rebalanceamento devido a quantidade de mensagens */
         properties.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1");/* de uma em uma */
 
+        /* Configurando o Deserializer para Orders*/
         properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
+
+        /* Sobrepondo as properties de acordo com o que é passado na construção do objeto*/
         properties.putAll(overridProperties);
         return properties;
     }

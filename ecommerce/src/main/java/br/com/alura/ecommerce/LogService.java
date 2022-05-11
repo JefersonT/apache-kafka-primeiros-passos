@@ -14,17 +14,21 @@ public class LogService {
         /* Definindo um novo LogService para utilizar seu método parse*/
         var logService = new LogService();
 
-        /*Definindo um variável que recebe um Kafka Consumer, que tem como parametros suas propriedades defininas
-        * no método properties. Subscrevendo o consumer em todos os topicos com inicio ECOMMERCE*/
+        /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o frauddetector
+         * o método KafdService<> GroupID, o Topic, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado
+         * Subscrevendo o consumer em todos os topicos com inicio ECOMMERCE*/
         try (var consumer = new KafkaService(LogService.class.getSimpleName(),
                 Pattern.compile("ECOMMERCE.*"),
                 logService::parse,
                 String.class,
-                Map.of(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName()))) {
+                Map.of(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName()))) { /* Sobrepões o Deserializer padrão da classe*/
+
+            /* Executando o Consumer*/
             consumer.run();
         }
     }
 
+    /* Método que será executando para cada mensagem recebida*/
     private void parse(ConsumerRecord<String, String> record) {
         System.out.println("-----------------------------");
         System.out.println("Processing new order, cheking for fraud");

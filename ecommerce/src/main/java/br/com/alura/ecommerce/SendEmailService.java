@@ -12,17 +12,21 @@ public class SendEmailService {
         /* Criando um novo SendEmailService para utilizar seu metodo parse*/
         var sendEmail = new SendEmailService();
 
-        /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o SendEmailService*/
+        /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o frauddetector
+         * o método KafdService<> GroupID, o Topic, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado */
         try(var service = new KafkaService(SendEmailService.class.getSimpleName(),
                 "ECOMMERCE_SEND_EMAIL",
                 sendEmail::parse,
                 String.class,
                 Map.of())) {
+
+            /* Executando o consumer*/
             service.run();
         }
         
     }
-    
+
+    /* Método que será executando para cada mensagem recebida*/
     private void parse(ConsumerRecord<String, String> record){
         System.out.println("-----------------------------");
         System.out.println("Processing new order, cheking for fraud");
