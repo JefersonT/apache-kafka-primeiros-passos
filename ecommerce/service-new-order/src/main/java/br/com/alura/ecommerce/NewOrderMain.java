@@ -17,7 +17,7 @@ public class NewOrderMain {
             try(var emailDispatcher = new KafkaDispatcher<String>()) { /* Criando um KafkaDispatcher para cria um Producer*/
 
                 /* criando 100 mensagens para de nova ordem e e-mail*/
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < 10; i++) {
 
                     /*Declarando uma userID Aleatório*/
                     var userID = UUID.randomUUID().toString();/*Chave criada aleatóriamente. Ela irá influênciar na distribuição das mensagens para cada partição do topic*/
@@ -26,7 +26,7 @@ public class NewOrderMain {
                     var orderId = UUID.randomUUID().toString();
 
                     /* Declarando o amount, o valor da orden em BigDecimal*/
-                    var amount = new BigDecimal(Math.random() * 5000 + 1); /* Valor entre 1 e 5000*/
+                    var amount = BigDecimal.valueOf(Math.random() * 5000 + 1); /* Valor entre 1 e 5000*/
 
                     /* Criando uma nova Order*/
                     var order = new Order(userID, orderId, amount);

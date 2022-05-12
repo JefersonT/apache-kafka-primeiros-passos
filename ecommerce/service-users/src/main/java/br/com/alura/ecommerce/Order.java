@@ -1,6 +1,7 @@
 package br.com.alura.ecommerce;
 
 import java.math.BigDecimal;
+
 /* Classe Order para utilizar como mensagem de envio referente*/
 public class Order {
 
@@ -15,20 +16,7 @@ public class Order {
         this.value = value;
     }
 
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "userID='" + userID + '\'' +
-                ", orderId='" + orderId + '\'' +
-                ", value=" + value +
-                '}';
-    }
-
-    public String getUserID() {
-        return userID;
+    public String getEmail() {
+        return "E-mail";
     }
 }

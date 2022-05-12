@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class KafkaService<T> implements Closeable {/*Closeable para podermos implementar o método que fecha o producer*/
@@ -60,7 +61,11 @@ public class KafkaService<T> implements Closeable {/*Closeable para podermos imp
 
                 /*Percorre o records e imprime as informações de cada registro*/
                 for (var record : records) {
-                    parse.consume(record);
+                    try {
+                        parse.consume(record);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
