@@ -16,8 +16,9 @@ Este projeto foi criado para por em prática o aprendizado referente a Kafka. O 
     - Executar a classe *FraudDetectorService* no módulo **service-fraud-detector**.
     - Executar a classe *SendEmailService* no módulo **service-send-email**.
     - Executar a classe *LogService* no módulo **service-log**.
+    - Executar a classe *CreateUserService* no módulo **service-users**.
     - Executar a classe *NewOrderMain* no módulo **service-new-order**.
--  Ao executar o NewOrderMain é possível notar nas demais janelas de execução os consumidores recebendo a order disparada pelo producer.
+-  Ao executar o NewOrderMain é possível notar nas demais janelas de execução os consumers recebendo a order disparada pelo producers.
 ## Anotações
 - Praticando diretamento no Kafka:
     - Com após executar o comando ```$ docker-compose up -d```, execute o comando ```docker ps```, para identificar o nome do container que esta rodando o kafka;
