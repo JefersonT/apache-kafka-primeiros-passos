@@ -15,6 +15,7 @@
         <module>service-send-email</module>
         <module>service-new-order</module>
         <module>service-users</module>
+        <module>service-httpecommerce</module>
     </modules>
 
     <dependencies>
