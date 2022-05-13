@@ -16,6 +16,9 @@ public class NewOrderMain {
             /* try para fechar o Producer da Email caso haja alguma exception na execução*/
             try(var emailDispatcher = new KafkaDispatcher<String>()) { /* Criando um KafkaDispatcher para cria um Producer*/
 
+                /*Criando email aleatório temporarioamente*/
+                var email = Math.random() + "@email.com";
+
                 /* criando 100 mensagens para de nova ordem e e-mail*/
                 for (int i = 0; i < 10; i++) {
 
@@ -28,16 +31,18 @@ public class NewOrderMain {
                     /* Declarando o amount, o valor da orden em BigDecimal*/
                     var amount = BigDecimal.valueOf(Math.random() * 5000 + 1); /* Valor entre 1 e 5000*/
 
+
+
                     /* Criando uma nova Order*/
-                    var order = new Order(userID, orderId, amount);
+                    var order = new Order(userID, orderId, amount, email);
                     /* Enviando a orden com o userID para o topic ECOMMERCE_NEW_ORDER*/
                     orderDispatcher.send("ECOMMERCE_NEW_ORDER", userID, order);
 
                     /* Denifindo o valor para o metodo send*/
-                    var email = "Thanks You for your new Order!";
+                    var emailCode = "Thanks You for your new Order!";
 
                     /* Enviando a Email com o userID para o topic ECOMMERCE_SEND_EMAIL*/
-                    emailDispatcher.send("ECOMMERCE_SEND_EMAIL", userID, email);
+                    emailDispatcher.send("ECOMMERCE_SEND_EMAIL", userID, emailCode);
                 }
             }
         }

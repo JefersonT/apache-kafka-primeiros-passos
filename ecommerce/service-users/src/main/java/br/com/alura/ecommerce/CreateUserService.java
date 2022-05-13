@@ -14,10 +14,16 @@ public class CreateUserService {
 
     public CreateUserService() throws SQLException {
         String url = "jdbc:sqlite:target/users_database.db";
-        this.connection = DriverManager.getConnection(url);
-        connection.createStatement().execute("create table Users (" +
-                "uuid varchar(200) primary key," +
-                "email varchar(200))");
+        connection = DriverManager.getConnection(url);
+        /* try para ignorar o erro nas proximas vezes que já existir o banco*/
+        try {
+            /* Criando a tablea Users*/
+            connection.createStatement().execute("create table Users (" +
+                    "uuid varchar(200) primary key," +
+                    "email varchar(200))");
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws SQLException {
@@ -50,23 +56,23 @@ public class CreateUserService {
 
         var order = record.value();
         if(isNewUser(order.getEmail())){
-            insertNewUser(order.getEmail());
+            insertNewUser(order.getUserID(), order.getEmail());
         }
 
 
     }
 
-    private void insertNewUser(String email) throws SQLException {
-        var insert = connection.prepareStatement("insert into User (uuid, email) values (?, ?)");
-        insert.setString(1, "uuid");
-        insert.setString(2,email);
+    private void insertNewUser(String userID, String email) throws SQLException {
+        var insert = connection.prepareStatement("insert into Users (uuid, email) values (?, ?)");
+        insert.setString(1, userID);
+        insert.setString(2, email);
         insert.execute();
         System.out.println("Usuário uuid e " + email + "adicionado");
 
     }
 
     private boolean isNewUser(String email) throws SQLException {
-        var exists =  connection.prepareStatement("select uuid from Users" +
+        var exists =  connection.prepareStatement("select uuid from Users " +
                 "where email = ? limit 1");
         exists.setString(1, email);
         var results = exists.executeQuery();
