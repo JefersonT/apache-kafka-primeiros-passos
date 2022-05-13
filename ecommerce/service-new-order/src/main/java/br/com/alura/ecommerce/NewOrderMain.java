@@ -22,9 +22,6 @@ public class NewOrderMain {
                 /* criando 100 mensagens para de nova ordem e e-mail*/
                 for (int i = 0; i < 10; i++) {
 
-                    /*Declarando uma userID Aleatório*/
-                    var userID = UUID.randomUUID().toString();/*Chave criada aleatóriamente. Ela irá influênciar na distribuição das mensagens para cada partição do topic*/
-
                     /* Declarando um orderID Aleatório*/
                     var orderId = UUID.randomUUID().toString();
 
@@ -34,15 +31,15 @@ public class NewOrderMain {
 
 
                     /* Criando uma nova Order*/
-                    var order = new Order(userID, orderId, amount, email);
+                    var order = new Order(orderId, amount, email);
                     /* Enviando a orden com o userID para o topic ECOMMERCE_NEW_ORDER*/
-                    orderDispatcher.send("ECOMMERCE_NEW_ORDER", userID, order);
+                    orderDispatcher.send("ECOMMERCE_NEW_ORDER", email, order);
 
                     /* Denifindo o valor para o metodo send*/
                     var emailCode = "Thanks You for your new Order!";
 
                     /* Enviando a Email com o userID para o topic ECOMMERCE_SEND_EMAIL*/
-                    emailDispatcher.send("ECOMMERCE_SEND_EMAIL", userID, emailCode);
+                    emailDispatcher.send("ECOMMERCE_SEND_EMAIL", email, emailCode);
                 }
             }
         }
