@@ -38,6 +38,9 @@ class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos impleme
          * responsável por converter a Order em bits, confertendo em Json e em seguida para bytes*/
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
 
+        /* Garante a sincronia de informaçõa entre todos as instáncias do kafka*/
+        properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
+
         /*retornando a variável com as propriedades*/
         return properties;
     }
