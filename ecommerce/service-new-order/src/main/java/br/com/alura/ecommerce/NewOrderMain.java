@@ -16,19 +16,16 @@ public class NewOrderMain {
             /* try para fechar o Producer da Email caso haja alguma exception na execução*/
             try(var emailDispatcher = new KafkaDispatcher<String>()) { /* Criando um KafkaDispatcher para cria um Producer*/
 
-                /*Criando email aleatório temporarioamente*/
-                var email = Math.random() + "@email.com";
-
                 /* criando 100 mensagens para de nova ordem e e-mail*/
                 for (int i = 0; i < 10; i++) {
+                    /*Criando email aleatório temporarioamente*/
+                    var email = Math.random() + "@email.com";
 
                     /* Declarando um orderID Aleatório*/
                     var orderId = UUID.randomUUID().toString();
 
                     /* Declarando o amount, o valor da orden em BigDecimal*/
                     var amount = BigDecimal.valueOf(Math.random() * 5000 + 1); /* Valor entre 1 e 5000*/
-
-
 
                     /* Criando uma nova Order*/
                     var order = new Order(orderId, amount, email);

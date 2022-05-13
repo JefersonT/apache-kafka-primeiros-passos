@@ -46,9 +46,6 @@ public class CreateUserService {
 
     }
 
-    private final KafkaDispatcher<Order> orderDispatcher = new KafkaDispatcher<>();
-
-
     /* Método que será executando para cada mensagem recebida*/
     private void parse(ConsumerRecord<String, Order> record) throws SQLException {
         System.out.println("-----------------------------");
@@ -56,27 +53,46 @@ public class CreateUserService {
         System.out.println("Mensage: " + record.value());// imprime a value
 
         var order = record.value();
+
+        /* Inserindo novo usuaário caso aindda não exista na base*/
         if(isNewUser(order.getEmail())){
+            /* Inserindo o usuário*/
             insertNewUser(order.getEmail());
         }
 
 
     }
 
+    /* Método para inserir um novo usuário*/
     private void insertNewUser(String email) throws SQLException {
+        /* variável com a chamada da conexão e script de insersão sql*/
         var insert = connection.prepareStatement("insert into Users (uuid, email) values (?, ?)");
+
+        /* Denifinindo o valor da primeira variável do script*/
         insert.setString(1, UUID.randomUUID().toString());
+
+        /* Definindo o valor da segunda variável da do script*/
         insert.setString(2, email);
+
+        /* Executando o script*/
         insert.execute();
+
         System.out.println("Usuário uuid e " + email + "adicionado");
 
     }
 
+    /* Método de verificação se o usuário é novo ou não*/
     private boolean isNewUser(String email) throws SQLException {
+        /*armazenando o script se seleção de usuário com o email do parâmentro*/
         var exists =  connection.prepareStatement("select uuid from Users " +
                 "where email = ? limit 1");
+
+        /* Definindo o valor da primeira variável do script*/
         exists.setString(1, email);
+
+        /* Esecutando o Script e armazenando a listagem em reults*/
         var results = exists.executeQuery();
-        return !results.next();
+
+        return !results.next();/* Retorna se houver algo na lista*/
     }
 }

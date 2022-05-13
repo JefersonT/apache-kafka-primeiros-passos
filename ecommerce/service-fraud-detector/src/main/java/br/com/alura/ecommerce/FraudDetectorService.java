@@ -16,7 +16,7 @@ public class FraudDetectorService {
         var fraudDetector = new FraudDetectorService();
 
         /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o frauddetector
-        * o método KafdService<> GroupID, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado */
+        * o método KafdService<>, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado */
         try(var service = new KafkaService<>(FraudDetectorService.class.getSimpleName(),
                 "ECOMMERCE_NEW_ORDER",
                 fraudDetector::parse,
@@ -29,6 +29,7 @@ public class FraudDetectorService {
 
     }
 
+    /* Declarando um producer*/
     private final KafkaDispatcher<Order> orderDispatcher = new KafkaDispatcher<>();
 
 
@@ -53,7 +54,9 @@ public class FraudDetectorService {
         }
     }
 
+    /* Verifica se é fraude, (compras acima de 4500 = fraude)*/
     private boolean isFraud(Order order) {
+        /* Comprara o valor da ordem com um valor de 4500*/
         return order.getValue().compareTo(new BigDecimal("4500")) >= 0;
     }
 }
