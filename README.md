@@ -86,4 +86,46 @@ Este projeto foi criado para por em prática o aprendizado referente a Kafka. O 
         log.dirs=caminho/diretorio/criado/anteriomente/zookeeper
         ```
     - **OBS**.: Neste projeto não há a necessidade de fazer este procedimento, visto que a imagem doker utilizada já possui esta alteração.
+- Replicação em Cluster
+    - Para replicar e criar um cluster primeiro você deve criar uma cópia do arquivo *server.properties* presente no diretório **config** do kafka, por exemplo com o nome *server2.properties*.
+    - Editar o Arquivo *server.properties* e fazer as seguintes alterações:
+        - Alterar o ```broker.id=0``` para outro valor, por exemplo ```broker.id=2```
+        - Adicionar a seguinte linha abaixo de ```broker.id=2```:
+            ```
+            default.replication.factor=2
+            ```
+        - Alterar o diretório de logs ```log.dirs=path/``` para outro diretório, por exemplo ```log.dirs=path2/```
+        - Alaterar a porta, que por padrão é 9092:
+            **DE**:
+            ```
+            #listeners=PLAINTEXT://:9092
+            ```
+            **PARA**:
+            ```
+            listeners=PLAINTEXT://:9093
+            ```
+    - Editar o arquivo *server.properties* e adicionar a seguinte linha abaixo de ```broker.id=0```:
+        ```
+        default.replication.factor=2
+        ```
+    - Editar cada um dos arquivos *server.properties* alterando:
+        DE:
+        ```
+        offsets.topic.replication.factor=1
+        transaction.state.log.replication.factor=1
+        ```
+        PARA:
+        ```
+        offsets.topic.replication.factor=2
+        transaction.state.log.replication.factor=2
+        ```
+    - Parar ambos os servidores kafka e zookeeper que estiverem executando.
+    - Apagar os dados de log para não ficar dados das execuções anteriores.
+    - Executar o novo servidor kafka configurado:
+        ```
+        $ kafka-server-start.sh server2.properties
+        $ kafka-server-start.sh server.properties
+        $ zookeeper-server-start.sh zookeeper.properties
+        ```
+    - Com essas configurações o kafka irá gerenciar e fazer a distribuição dos tópicos entre os brokers.
     
