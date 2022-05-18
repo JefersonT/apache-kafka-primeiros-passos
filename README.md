@@ -19,6 +19,14 @@ Este projeto foi criado para por em prática o aprendizado referente a Kafka. O 
     - Executar a classe *CreateUserService* no módulo **service-users**.
     - Executar a classe *NewOrderMain* no módulo **service-new-order**.
 -  Ao executar o NewOrderMain é possível notar nas demais janelas de execução os consumers recebendo a order disparada pelo producers.
+- Para executar o disparo de uma ordem via http:
+    - Executar a classe *HttpEcommerceService* no módulo **service-httpecommerce**.
+    - Acesse *http://localhost:8080/new?amaunt=VALOR&email=teste@email.com*
+- Para executar o disparo de Relatórios para cada usuário:
+    - Executar a classe *HttpEcommerceService* no módulo **service-httpecommerce**.
+    - Executar a classe *ReadingReportService* no módulo **service-reading-report**
+    - Executar a classe *BatchSendMessageService* no módulo **service-users***
+    - Acesse *http://localhost:8080/admin/generate-reports*
 ## Anotações
 - Praticando diretamento no Kafka:
     - Com após executar o comando ```$ docker-compose up -d```, execute o comando ```docker ps```, para identificar o nome do container que esta rodando o kafka;

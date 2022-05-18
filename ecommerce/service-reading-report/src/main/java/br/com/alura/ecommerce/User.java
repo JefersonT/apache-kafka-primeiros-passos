@@ -7,6 +7,7 @@ public class User {
         this.uuid = uuid;
     }
 
+    /* Definindo um local e arquivo para os target*/
     public String getReportPath() {
         return "target/" + uuid + "-reporte.txt";
     }
