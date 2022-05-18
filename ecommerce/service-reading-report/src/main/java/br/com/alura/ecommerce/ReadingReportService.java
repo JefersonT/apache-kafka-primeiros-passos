@@ -36,12 +36,13 @@ public class ReadingReportService {
     }
 
     /* Método que será executando para cada Usuário*/
-    private void parse(ConsumerRecord<String, User> record) throws IOException {
+    private void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
         System.out.println("-----------------------------");
         System.out.println("Processing report for " + record.value());
 
+        var message = record.value();
         /* Guardadno valor de record*/
-        var user = record.value();
+        var user = message.getPayload();
 
         /* Definindo arquivo de destino*/
         var target = new File(user.getReportPath());

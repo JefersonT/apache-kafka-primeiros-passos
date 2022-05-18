@@ -5,25 +5,16 @@ import com.google.gson.GsonBuilder;
 import org.apache.kafka.common.serialization.Deserializer;
 import java.util.Map;
 
-public class GsonDeserializer<T> implements Deserializer<T> { /* Implementa Deserializer para ser identificado como um Deserializador e extender as classes necessárias*/
-    public static final String TYPE_CONFIG = "br.com.alura.ecommerce.type_config";
-    private final Gson gson = new GsonBuilder().create();
-    private Class<T> type;
+/* Implementa Deserializer para ser identificado como um Deserializador e extender as classes necessárias*/
+public class GsonDeserializer implements Deserializer<Message> {
 
-    @Override
-    public void configure(Map<String, ?> configs, boolean isKey) {
-        String typeName = String.valueOf(configs.get(TYPE_CONFIG));
-        try {
-            this.type = (Class<T>) Class.forName(typeName);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Type for deserialization does not exist in the class path!");
-        }
-    }
+    /* Cria um Gson com registerTypeAdapter para especificar como Adaptar do Serializer/Deserializer para o tipo Message*/
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(Message.class, new MessageAdapter()).create();
 
-    /* Deserializador*/
+    /* Deserializador para tipo Message*/
     @Override
-    public T deserialize(String s, byte[] bytes) {
+    public Message deserialize(String s, byte[] bytes) {
         /* Deserializa de bytes para String e de de String para Jason*/
-        return gson.fromJson(new String(bytes), type);
+        return gson.fromJson(new String(bytes), Message.class);
     }
 }

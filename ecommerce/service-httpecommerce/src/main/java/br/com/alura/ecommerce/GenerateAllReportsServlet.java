@@ -28,7 +28,9 @@ public class GenerateAllReportsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             /* Enviando a ordem de generete para todos os usuários*/
-            batchDispatcher.send("SEND_MESSAGE_TO_ALL_USERS", "USER_GENERATE_READING_REPORT", "USER_GENERATE_READING_REPORT");
+            batchDispatcher.send("SEND_MESSAGE_TO_ALL_USERS",
+                    "USER_GENERATE_READING_REPORT",
+                    "USER_GENERATE_READING_REPORT");
 
             /* Cconfirmação de envio*/
             System.out.println("sent generate reporto to all users");

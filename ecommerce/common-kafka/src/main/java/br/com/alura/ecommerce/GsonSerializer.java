@@ -8,8 +8,9 @@ import org.apache.kafka.common.serialization.Serializer;
 *  Herda da classe Serializer para ser identificado como um Serializador*/
 public class GsonSerializer<T> implements Serializer<T> {
 
-    /* Criando um objeto do tipo GsonBuilder para utilizar os recursos de json*/
-    private final Gson gson = new GsonBuilder().create();
+    /* Criando um objeto do tipo GsonBuilder para utilizar os recursos de json
+    * adicionando o registerTypeAdapter para adaptar o Serializer para o type Message*/
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(Message.class, new MessageAdapter()).create();
 
     /* Sobrescrevendo o serializador em byte para serializar os recursos em json*/
     @Override

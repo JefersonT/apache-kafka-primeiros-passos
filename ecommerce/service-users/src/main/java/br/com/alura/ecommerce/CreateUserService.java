@@ -47,12 +47,13 @@ public class CreateUserService {
     }
 
     /* Método que será executando para cada mensagem recebida*/
-    private void parse(ConsumerRecord<String, Order> record) throws SQLException {
+    private void parse(ConsumerRecord<String, Message<Order>> record) throws SQLException {
         System.out.println("-----------------------------");
         System.out.println("Processing new order, cheking for fraud");
         System.out.println("Mensage: " + record.value());// imprime a value
+        var message = record.value();
 
-        var order = record.value();
+        var order = message.getPayload();
 
         /* Inserindo novo usuaário caso aindda não exista na base*/
         if(isNewUser(order.getEmail())){

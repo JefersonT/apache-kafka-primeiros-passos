@@ -14,20 +14,20 @@ import java.util.regex.Pattern;
 
 public class KafkaService<T> implements Closeable {/*Closeable para podermos implementar o método que fecha o producer*/
     /* Definindo um Consumer com chave String e Values T*/
-    private final KafkaConsumer<String, T> consumer;
+    private final KafkaConsumer<String, Message<T>> consumer;
 
     /* Definindo um ConsumerFunction para o parse*/
     private final ConsumerFunction parse;
 
     /*Construtor*/
-    public KafkaService(String groupId, String topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+    public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
         this(parse, groupId, type, properties);
 
         /*Subscrevendo o consumer criado anteriomete ao Topico*/
         consumer.subscribe(Collections.singletonList(topic));
     }
 
-    public KafkaService(String groupId, Pattern topic, ConsumerFunction parse, Class<T> type, Map<String, String> properties) {
+    public KafkaService(String groupId, Pattern topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
         this(parse, groupId, type, properties);
 
         /*Subscrevendo o consumer criado anteriomete ao Topico*/
@@ -100,9 +100,6 @@ public class KafkaService<T> implements Closeable {/*Closeable para podermos imp
         /* Esta configuração define com que frequencia de mensagens, o consumer irá commitar as mensagens
          * Aumentar a frequencia permite reduzir os problemas com rebalanceamento devido a quantidade de mensagens */
         properties.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1");/* de uma em uma */
-
-        /* Configurando o Deserializer para Orders*/
-        properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
 
         /* Sobrepondo as properties de acordo com o que é passado na construção do objeto*/
         properties.putAll(overridProperties);

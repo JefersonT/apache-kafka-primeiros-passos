@@ -13,7 +13,7 @@ class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos impleme
     /* Declarando uma variável que recebe um novo KafkaProducer
     * responsável pelo envio de mensagens
     * com dois prarámtros <chave, mensagem>, neste caso strings*/
-    private final KafkaProducer<String, T> producer;
+    private final KafkaProducer<String, Message<T>> producer;
 
     /* Contrutor*/
     public KafkaDispatcher() {
@@ -47,8 +47,13 @@ class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos impleme
 
     /* Metódo para dispara a Mensagem que recebe o topico, a chave e o valor da mensagem
     * podendo ser de qualquer tipo*/
-    public void send(String topic, String key, T value) throws ExecutionException, InterruptedException {
-        /* Declarando uma variável com um novo produtor de registro que deve receber como parametro o topico, a chave e a mensagem
+    public void send(String topic, String key, T payload) throws ExecutionException, InterruptedException {
+
+        /* "Envelopando" tudo em um Message*/
+        var value = new Message<T>(new CorrelationId(), payload);
+
+        /* Declarando uma variável com um novo produtor de registro que deve receber como parametro o topico,
+         * a chave e a mensage
          * existem diversas override do método para se implementado*/
         var record = new ProducerRecord<>(topic, key, value);
 

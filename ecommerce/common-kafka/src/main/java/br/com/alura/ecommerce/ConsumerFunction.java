@@ -6,5 +6,5 @@ import java.util.concurrent.ExecutionException;
 
 /* Esta Interface define uma função a qual irá manipular as respostas recebidas pelo concumer*/
 public interface ConsumerFunction<T> {
-    void consume(ConsumerRecord<String, T> record) throws Exception;
+    void consume(ConsumerRecord<String, Message<T>> record) throws Exception;
 }

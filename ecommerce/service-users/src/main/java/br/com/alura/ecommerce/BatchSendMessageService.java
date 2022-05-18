@@ -50,17 +50,18 @@ public class BatchSendMessageService {
     }
 
     /* Definindo um novo producer*/
-    private final KafkaDispatcher<User> userDispatcher = new KafkaDispatcher<User>();
+    private final KafkaDispatcher<User> userDispatcher = new KafkaDispatcher<>();
 
     /* Método que será executando para cada User recebida*/
-    private void parse(ConsumerRecord<String, String> record) throws ExecutionException, InterruptedException, SQLException {
+    private void parse(ConsumerRecord<String, Message<String>> record) throws ExecutionException, InterruptedException, SQLException {
         System.out.println("-----------------------------");
         System.out.println("Processing new batch");
-        System.out.println("Topic: " + record.value());// imprime a value
+        var message = record.value();
+        System.out.println("Topic: " + message.getPayload());// imprime a value
 
         /* Disparando o relatório para cada user*/
         for (User user : getAllUsers()) {
-            userDispatcher.send(record.value(), user.getUuid(), user);
+            userDispatcher.send(message.getPayload(), user.getUuid(), user);
         }
     }
 
