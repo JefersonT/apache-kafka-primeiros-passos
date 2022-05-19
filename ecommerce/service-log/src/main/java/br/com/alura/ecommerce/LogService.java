@@ -20,7 +20,6 @@ public class LogService {
         try (var consumer = new KafkaService(LogService.class.getSimpleName(),
                 Pattern.compile("ECOMMERCE.*"),
                 logService::parse,
-                String.class,
                 Map.of(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                         StringDeserializer.class.getName()))) { /* Sobrepões o Deserializer padrão da classe*/
 

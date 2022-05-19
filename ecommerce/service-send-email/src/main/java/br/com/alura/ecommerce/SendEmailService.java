@@ -17,7 +17,6 @@ public class SendEmailService {
         try(var service = new KafkaService(SendEmailService.class.getSimpleName(),
                 "ECOMMERCE_SEND_EMAIL",
                 sendEmail::parse,
-                String.class,
                 Map.of())) {
 
             /* Executando o consumer*/

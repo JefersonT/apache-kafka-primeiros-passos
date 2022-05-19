@@ -20,27 +20,27 @@ public class KafkaService<T> implements Closeable {/*Closeable para podermos imp
     private final ConsumerFunction parse;
 
     /*Construtor*/
-    public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
-        this(parse, groupId, type, properties);
+    public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Map<String, String> properties) {
+        this(parse, groupId,properties);
 
         /*Subscrevendo o consumer criado anteriomete ao Topico*/
         consumer.subscribe(Collections.singletonList(topic));
     }
 
-    public KafkaService(String groupId, Pattern topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
-        this(parse, groupId, type, properties);
+    public KafkaService(String groupId, Pattern topic, ConsumerFunction<T> parse, Map<String, String> properties) {
+        this(parse, groupId, properties);
 
         /*Subscrevendo o consumer criado anteriomete ao Topico*/
         consumer.subscribe(topic);
     }
 
-    public KafkaService(ConsumerFunction parse, String groupId, Class<T> type, Map<String, String> properties) {
+    public KafkaService(ConsumerFunction parse, String groupId, Map<String, String> properties) {
         /* Iniciando a variável parse com os parametros passados no método*/
         this.parse = parse;
 
         /* Iniciando a variável que recebe um Kafka Consumer, que tem como parametros suas propriedades defininas
          * no método properties*/
-        this.consumer = new KafkaConsumer<>(getProperties(type, groupId, properties));
+        this.consumer = new KafkaConsumer<>(getProperties(groupId, properties));
     }
 
     /* Executando o disparo das mensagem*/
@@ -73,7 +73,7 @@ public class KafkaService<T> implements Closeable {/*Closeable para podermos imp
 
 
     /*Definindo as propriedades do Consumer*/
-    private Properties getProperties(Class<T> type, String groupId, Map<String, String> overridProperties) {
+    private Properties getProperties(String groupId, Map<String, String> overridProperties) {
         /*Definindo uma variável que recepe um novo Properties()*/
         var properties = new Properties();
 
