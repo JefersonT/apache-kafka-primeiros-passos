@@ -34,7 +34,7 @@ public class FraudDetectorService {
 
 
     /* Método que será executando para cada mensagem recebida*/
-    private void parse(ConsumerRecord<String, Order> record) throws ExecutionException, InterruptedException {
+    private void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException {
         System.out.println("-----------------------------");
         System.out.println("Processing new order, cheking for fraud");
         System.out.println("Chave: " + record.key());// imprime a chave
@@ -42,15 +42,23 @@ public class FraudDetectorService {
         System.out.println("Offset: " + record.offset());// imprime offset
         System.out.println("Partition: " + record.partition());// imprime a partition
 
-        var order = record.value();
+        var message = record.value();
+        var order = message.getPayload();
         if (isFraud(order)){
             // fingindo encontrar um fraud com uma compra de <= 4500
             System.out.println("Order is a fraud!");
-            orderDispatcher.send("ECOMMERCE_ORDER_REJECTED", order.getEmail(), order);
+            orderDispatcher.send("ECOMMERCE_ORDER_REJECTED",
+                    order.getEmail(),
+                    order,
+                    //correlationId, pegando id atual e adicionando o id do processo atual
+                    message.getId().continueWith(FraudDetectorService.class.getSimpleName()));
         } else {
             System.out.println("Approved: "+ order);
-            orderDispatcher.send("ECOMMERCE_ORDER_APPROVED", order.getEmail(), order);
-
+            orderDispatcher.send("ECOMMERCE_ORDER_APPROVED",
+                    order.getEmail(),
+                    order,
+                    //correlationId, pegando id atual e adicionando o id do processo atual
+                    message.getId().continueWith(FraudDetectorService.class.getSimpleName()));
         }
     }
 

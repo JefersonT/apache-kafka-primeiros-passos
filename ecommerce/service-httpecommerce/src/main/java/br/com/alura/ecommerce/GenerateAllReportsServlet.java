@@ -28,9 +28,11 @@ public class GenerateAllReportsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             /* Enviando a ordem de generete para todos os usuários*/
-            batchDispatcher.send("SEND_MESSAGE_TO_ALL_USERS",
-                    "USER_GENERATE_READING_REPORT",
-                    "USER_GENERATE_READING_REPORT");
+            batchDispatcher.send("ECOMMERCE_SEND_MESSAGE_TO_ALL_USERS",
+                    "ECOMMERCE_USER_GENERATE_READING_REPORT",
+                    "ECOMMERCE_USER_GENERATE_READING_REPORT",
+                    new CorrelationId(GenerateAllReportsServlet.class.getSimpleName())); // CorrelationId inicial,
+            // como este é o primeiro a disparar uma mensagem ele receber um novo id para ser passado para os proximos
 
             /* Cconfirmação de envio*/
             System.out.println("sent generate reporto to all users");

@@ -6,9 +6,9 @@ import java.util.UUID;
 public class CorrelationId {
     private final String id;
 
-    /* Contrutor com id aleatório (Temporário)*/
-    public CorrelationId() {
-        id = UUID.randomUUID().toString();
+    /* Contrutor com id aleatório */
+    public CorrelationId(String title) {
+        id = title + "(" + UUID.randomUUID().toString() + ")";
     }
 
     @Override
@@ -16,5 +16,10 @@ public class CorrelationId {
         return "CorrelationId{" +
                 "id='" + id + '\'' +
                 '}';
+    }
+
+    /* método para dá continuidade no id adicionando um titolo a cada envio da mensagem*/
+    public CorrelationId continueWith (String title){
+        return new CorrelationId(id + "-" + title);
     }
 }

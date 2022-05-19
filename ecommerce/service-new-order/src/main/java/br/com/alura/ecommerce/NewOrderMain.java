@@ -30,13 +30,21 @@ public class NewOrderMain {
                     /* Criando uma nova Order*/
                     var order = new Order(orderId, amount, email);
                     /* Enviando a orden com o userID para o topic ECOMMERCE_NEW_ORDER*/
-                    orderDispatcher.send("ECOMMERCE_NEW_ORDER", email, order);
+                    orderDispatcher.send("ECOMMERCE_NEW_ORDER",
+                            email,
+                            order,
+                            new CorrelationId(NewOrderMain.class.getSimpleName()));// CorrelationId inicial,
+                    // como este é o primeiro a disparar uma mensagem ele receber um novo id para ser passado para os proximos
 
                     /* Denifindo o valor para o metodo send*/
                     var emailCode = "Thanks You for your new Order!";
 
                     /* Enviando a Email com o userID para o topic ECOMMERCE_SEND_EMAIL*/
-                    emailDispatcher.send("ECOMMERCE_SEND_EMAIL", email, emailCode);
+                    emailDispatcher.send("ECOMMERCE_SEND_EMAIL",
+                            email,
+                            emailCode,
+                            new CorrelationId(NewOrderMain.class.getSimpleName()));// CorrelationId inicial,
+                    // como este é o primeiro a disparar uma mensagem ele receber um novo id para ser passado para os proximos
                 }
             }
         }

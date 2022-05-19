@@ -38,7 +38,7 @@ public class BatchSendMessageService {
         /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o batchService
          * o método KafkaService<> GroupID, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado */
         try (var service = new KafkaService<>(BatchSendMessageService.class.getSimpleName(),
-                "SEND_MESSAGE_TO_ALL_USERS",
+                "ECOMMERCE_SEND_MESSAGE_TO_ALL_USERS",
                 batchService::parse,
                 String.class,
                 Map.of())) {
@@ -61,7 +61,11 @@ public class BatchSendMessageService {
 
         /* Disparando o relatório para cada user*/
         for (User user : getAllUsers()) {
-            userDispatcher.send(message.getPayload(), user.getUuid(), user);
+            userDispatcher.send(message.getPayload(),
+                    user.getUuid(),
+                    user,
+                    //correlationId, pegando id atual e adicionando o id do processo atual
+                    message.getId().continueWith(BatchSendMessageService.class.getSimpleName()));
         }
     }
 

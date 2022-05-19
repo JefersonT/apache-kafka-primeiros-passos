@@ -1,11 +1,9 @@
 package br.com.alura.ecommerce;
 
-import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.servlet.Source;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,21 +36,27 @@ public class NewOrderServlet extends HttpServlet {
             /* Criando uma nova Order*/
             var order = new Order(orderId, amount, email);
             /* Enviando a orden com o userID para o topic ECOMMERCE_NEW_ORDER*/
-            orderDispatcher.send("ECOMMERCE_NEW_ORDER", email, order);
+            orderDispatcher.send("ECOMMERCE_NEW_ORDER",
+                    email,
+                    order,
+                    new CorrelationId(NewOrderServlet.class.getSimpleName())); // CorrelationId inicial,
+            // como este é o primeiro a disparar uma mensagem ele receber um novo id para ser passado para os proximos
 
             /* Denifindo o valor para o metodo send*/
             var emailCode = "Thanks You for your new Order!";
 
             /* Enviando a Email com o userID para o topic ECOMMERCE_SEND_EMAIL*/
-            emailDispatcher.send("ECOMMERCE_SEND_EMAIL", email, emailCode);
+            emailDispatcher.send("ECOMMERCE_SEND_EMAIL",
+                    email,
+                    emailCode,
+                    new CorrelationId(NewOrderServlet.class.getSimpleName())); // CorrelationId inicial,
+            // como este é o primeiro a disparar uma mensagem ele receber um novo id para ser passado para os proximos
 
             System.out.println("New order sent successfully!");
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().println("New order sent!");
 
-        } catch (ExecutionException e) {
-            throw new ServletException(e);
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new ServletException(e);
         }
     }

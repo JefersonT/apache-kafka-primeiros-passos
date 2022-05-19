@@ -24,7 +24,7 @@ public class ReadingReportService {
         /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o reportService
         * o método KafkaService<>, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado */
         try(var service = new KafkaService<>(ReadingReportService.class.getSimpleName(),
-                "USER_GENERATE_READING_REPORT",
+                "ECOMMERCE_USER_GENERATE_READING_REPORT",
                 reportService::parse,
                 User.class,
                 Map.of())) {

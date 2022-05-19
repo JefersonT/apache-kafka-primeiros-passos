@@ -45,12 +45,13 @@ class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos impleme
         return properties;
     }
 
-    /* Metódo para dispara a Mensagem que recebe o topico, a chave e o valor da mensagem
+    /* Metódo para dispara a Mensagem que recebe o topico, a chave, o valor da mensagem
+    *  e um CorralationId para manter a relação de envio da mensagem
     * podendo ser de qualquer tipo*/
-    public void send(String topic, String key, T payload) throws ExecutionException, InterruptedException {
+    public void send(String topic, String key, T payload, CorrelationId id) throws ExecutionException, InterruptedException {
 
         /* "Envelopando" tudo em um Message*/
-        var value = new Message<T>(new CorrelationId(), payload);
+        var value = new Message<>(id, payload);
 
         /* Declarando uma variável com um novo produtor de registro que deve receber como parametro o topico,
          * a chave e a mensage
