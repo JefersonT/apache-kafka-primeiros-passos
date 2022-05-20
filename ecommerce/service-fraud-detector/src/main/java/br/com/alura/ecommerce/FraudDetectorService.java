@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 public class FraudDetectorService {
 
     /* Class principal*/
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         /* Definindo um novo FraudDetectorService para utilizar seu método parse*/
         var fraudDetector = new FraudDetectorService();

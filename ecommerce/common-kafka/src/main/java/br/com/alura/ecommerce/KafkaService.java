@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class KafkaService<T> implements Closeable {/*Closeable para podermos implementar o método que fecha o producer*/
@@ -44,30 +45,39 @@ public class KafkaService<T> implements Closeable {/*Closeable para podermos imp
     }
 
     /* Executando o disparo das mensagem*/
-    void run(){
+    void run() throws ExecutionException, InterruptedException {
+        /* Try para matar o processo caso a mensagem de deadLetter apresente exception*/
+        try (var deadLetter = new KafkaDispatcher<>()){
 
-        /*Loop para manter o consumer executando e recebendo os eventos do Producer*/
-        while (true) {
+            /*Loop para manter o consumer executando e recebendo os eventos do Producer*/
+            while (true) {
 
-            /*o consumer.poll irá perguntar se tem mensagem a receber durante 100 milisegundos
-             * o resultado será setado na variável records */
-            var records = consumer.poll(Duration.ofMillis(100));
+                /*o consumer.poll irá perguntar se tem mensagem a receber durante 100 milisegundos
+                 * o resultado será setado na variável records */
+                var records = consumer.poll(Duration.ofMillis(100));
 
-            /*se records possuir algum registro*/
-            if (!records.isEmpty()) {
-                /*printa a quantidade de registros*/
-                System.out.println("Encontrei" + records.count() + "Registros");
+                /*se records possuir algum registro*/
+                if (!records.isEmpty()) {
+                    /*printa a quantidade de registros*/
+                    System.out.println("Encontrei" + records.count() + "Registros");
 
-                /*Percorre o records e imprime as informações de cada registro*/
-                for (var record : records) {
-                    try {
-                        parse.consume(record);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    /*Percorre o records e imprime as informações de cada registro*/
+                    for (var record : records) {
+                        try {
+                            parse.consume(record);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            var message = record.value();
+
+                            /* Disparando mensagem para avisar a Exception*/
+                            deadLetter.send("ECOMMERCE_DEADLETTER",
+                                    message.getId().toString(),
+                                    new GsonSerializer<>().serialize("", message),
+                                    message.getId().continueWith("DeadLetter"));
+                        }
                     }
                 }
             }
-
         }
     }
 

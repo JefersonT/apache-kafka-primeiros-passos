@@ -30,7 +30,7 @@ public class BatchSendMessageService {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
 
         /* Definindo um novo BatchSendMessageService para utilizar seu método parse*/
         var batchService = new BatchSendMessageService();
@@ -58,9 +58,11 @@ public class BatchSendMessageService {
         var message = record.value();
         System.out.println("Topic: " + message.getPayload());// imprime a value
 
+        if (true) throw new RuntimeException("Deu um erro que forcei");
+
         /* Disparando o relatório para cada user*/
         for (User user : getAllUsers()) {
-            userDispatcher.send(message.getPayload(),
+            userDispatcher.sendAsync(message.getPayload(),
                     user.getUuid(),
                     user,
                     //correlationId, pegando id atual e adicionando o id do processo atual

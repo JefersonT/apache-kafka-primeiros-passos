@@ -3,11 +3,12 @@ package br.com.alura.ecommerce;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /*Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
 public class SendEmailService {
     /*Callse principal*/
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         /* Criando um novo SendEmailService para utilizar seu metodo parse*/
         var sendEmail = new SendEmailService();

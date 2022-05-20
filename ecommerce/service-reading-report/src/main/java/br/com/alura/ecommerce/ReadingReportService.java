@@ -16,7 +16,7 @@ public class ReadingReportService {
     private static final Path SOURCE = new File("src/main/resources/report.txt").toPath();
 
     /* Class principal*/
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         /* Definindo um novo ReadingReportService para utilizar seu método parse*/
         var reportService = new ReadingReportService();

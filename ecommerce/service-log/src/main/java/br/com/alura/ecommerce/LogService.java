@@ -5,12 +5,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 /*Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
 public class LogService {
     /*Callse principal*/
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         /* Definindo um novo LogService para utilizar seu método parse*/
         var logService = new LogService();
 

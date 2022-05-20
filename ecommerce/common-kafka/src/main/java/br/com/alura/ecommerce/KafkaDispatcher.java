@@ -1,13 +1,11 @@
 package br.com.alura.ecommerce;
 
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import java.io.Closeable;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos implementar o método que fecha o producer*/
     /* Declarando uma variável que recebe um novo KafkaProducer
@@ -47,9 +45,20 @@ class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos impleme
 
     /* Metódo para dispara a Mensagem que recebe o topico, a chave, o valor da mensagem
     *  e um CorralationId para manter a relação de envio da mensagem
-    * podendo ser de qualquer tipo*/
+    * podendo ser de qualquer tipo
+    * Sincrono*/
     public void send(String topic, String key, T payload, CorrelationId id) throws ExecutionException, InterruptedException {
 
+        /* Chamando o método assincrono para torna-lo sincrona*/
+        java.util.concurrent.Future<org.apache.kafka.clients.producer.RecordMetadata> future = sendAsync(topic, key, payload, id);
+        future.get();// como o send é assincrono utilizamos o .get() para esperar a future terminar
+    }
+
+    /* Metódo para dispara a Mensagem que recebe o topico, a chave, o valor da mensagem
+     *  e um CorralationId para manter a relação de envio da mensagem
+     * podendo ser de qualquer tipo
+     * Assincrono*/
+    public Future<RecordMetadata> sendAsync(String topic, String key, T payload, CorrelationId id) {
         /* "Envelopando" tudo em um Message*/
         var value = new Message<>(id, payload);
 
@@ -71,7 +80,8 @@ class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos impleme
         };
         /* Realizando o envio do ProducerRecord pelo producer
          * e uma variável de callback para tratar as exceptions ou dados retornados do producer.send*/
-        producer.send(record, callback).get();// como o send é assincrono utilizamos o .get() para esperar a feture terminar
+        var future = producer.send(record, callback);
+        return future;
     }
 
     /* Método para fechar o servise*/

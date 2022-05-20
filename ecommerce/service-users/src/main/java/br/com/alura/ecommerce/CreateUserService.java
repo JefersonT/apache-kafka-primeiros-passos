@@ -27,7 +27,7 @@ public class CreateUserService {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
 
         /* Definindo um novo FraudDetectorService para utilizar seu método parse*/
         var createUser = new CreateUserService();
