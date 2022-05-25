@@ -1,8 +1,8 @@
 package br.com.alura.ecommerce;
 
+import br.com.alura.ecommerce.consumer.KafkaService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

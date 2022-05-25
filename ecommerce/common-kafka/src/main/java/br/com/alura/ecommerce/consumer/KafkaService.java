@@ -1,5 +1,8 @@
-package br.com.alura.ecommerce;
+package br.com.alura.ecommerce.consumer;
 
+import br.com.alura.ecommerce.Message;
+import br.com.alura.ecommerce.dispatcher.GsonSerializer;
+import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -45,7 +48,7 @@ public class KafkaService<T> implements Closeable {/*Closeable para podermos imp
     }
 
     /* Executando o disparo das mensagem*/
-    void run() throws ExecutionException, InterruptedException {
+    public void run() throws ExecutionException, InterruptedException {
         /* Try para matar o processo caso a mensagem de deadLetter apresente exception*/
         try (var deadLetter = new KafkaDispatcher<>()){
 

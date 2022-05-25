@@ -1,5 +1,7 @@
-package br.com.alura.ecommerce;
+package br.com.alura.ecommerce.dispatcher;
 
+import br.com.alura.ecommerce.CorrelationId;
+import br.com.alura.ecommerce.Message;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import java.io.Closeable;
@@ -7,7 +9,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos implementar o método que fecha o producer*/
+public class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos implementar o método que fecha o producer*/
     /* Declarando uma variável que recebe um novo KafkaProducer
     * responsável pelo envio de mensagens
     * com dois prarámtros <chave, mensagem>, neste caso strings*/
@@ -60,7 +62,7 @@ class KafkaDispatcher<T> implements Closeable {/*Closeable para podermos impleme
      * Assincrono*/
     public Future<RecordMetadata> sendAsync(String topic, String key, T payload, CorrelationId id) {
         /* "Envelopando" tudo em um Message*/
-        var value = new Message<>(id, payload);
+        var value = new Message<>(id.continueWith("_" + topic), payload);
 
         /* Declarando uma variável com um novo produtor de registro que deve receber como parametro o topico,
          * a chave e a mensage
