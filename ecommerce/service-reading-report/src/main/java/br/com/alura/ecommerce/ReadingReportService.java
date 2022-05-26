@@ -1,6 +1,8 @@
 package br.com.alura.ecommerce;
 
+import br.com.alura.ecommerce.consumer.ConsumerService;
 import br.com.alura.ecommerce.consumer.KafkaService;
+import br.com.alura.ecommerce.consumer.ServiceRunner;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.io.File;
@@ -10,31 +12,19 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /* Definindo Class Consumidora do tópico ECOMMERCE_NEW_ORDER*/
-public class ReadingReportService {
+public class ReadingReportService implements ConsumerService<User> {
     /* Definindo o local e arquivo de base de relatórios*/
     private static final Path SOURCE = new File("src/main/resources/report.txt").toPath();
 
     /* Class principal*/
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-
-        /* Definindo um novo ReadingReportService para utilizar seu método parse*/
-        var reportService = new ReadingReportService();
-
-        /* Try para fechar o serviço caso haja algum erro na execução, chamando o serviço para o reportService
-        * o método KafkaService<>, ConsumerFunction, o Tipo da mensagem, e Map.of() com as configurações especiais do consumer a ser criado */
-        try(var service = new KafkaService<>(ReadingReportService.class.getSimpleName(),
-                "ECOMMERCE_USER_GENERATE_READING_REPORT",
-                reportService::parse,
-                Map.of())) {
-
-            /* Executando o Serviço*/
-            service.run();
-        }
+        /* Criando um Runner para executar o serviço 5x*/
+        new ServiceRunner(ReadingReportService::new).start(5);
 
     }
 
     /* Método que será executando para cada Usuário*/
-    private void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
+    public void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
         System.out.println("-----------------------------");
         System.out.println("Processing report for " + record.value());
 
@@ -55,5 +45,16 @@ public class ReadingReportService {
 
     }
 
+    /* Definindo o ConsumerGroup do serviço*/
+    @Override
+    public String getConsumerGroup() {
+        return ReadingReportService.class.getSimpleName();
+    }
+
+    /* Definindo o Topic do serviço*/
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_USER_GENERATE_READING_REPORT";
+    }
 }
 
