@@ -4,7 +4,6 @@ import br.com.alura.ecommerce.consumer.KafkaService;
 import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +28,7 @@ public class EmailNewOrderService {
         }
 
     }
+
 
     /* Declarando um producer*/
     private final KafkaDispatcher<String> emailDispatcher = new KafkaDispatcher<>();
