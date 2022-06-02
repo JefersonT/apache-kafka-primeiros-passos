@@ -13,7 +13,7 @@ public class ServiceProvider<T> implements Callable<Void> {
         this.factory = factory;
     }
 
-    public Void call() throws ExecutionException, InterruptedException {
+    public Void call() throws Exception {
         /* Criando um novo Service através do factory.create (ServiceFactroy)*/
         var myService = factory.create();
 

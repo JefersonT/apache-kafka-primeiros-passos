@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 public interface ConsumerService<T> {
 
     /* Método que será executando para cada Message*/
-    void parse(ConsumerRecord<String, Message<T>> record) throws IOException, ExecutionException, InterruptedException;
+    void parse(ConsumerRecord<String, Message<T>> record) throws Exception;
     /* método onde será atriuido o consumerGroup do consumer a ser criado*/
     String getConsumerGroup();
 
