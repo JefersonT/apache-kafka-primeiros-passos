@@ -4,13 +4,14 @@ import br.com.alura.ecommerce.Message;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /* Interface para criar um serviço consumer
 *  Ele irá padronizar os dados necessários para para criação de um consumer*/
 public interface ConsumerService<T> {
 
     /* Método que será executando para cada Message*/
-    void parse(ConsumerRecord<String, Message<T>> record) throws IOException;
+    void parse(ConsumerRecord<String, Message<T>> record) throws IOException, ExecutionException, InterruptedException;
     /* método onde será atriuido o consumerGroup do consumer a ser criado*/
     String getConsumerGroup();
 

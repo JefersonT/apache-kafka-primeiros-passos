@@ -114,6 +114,10 @@ public class KafkaService<T> implements Closeable {/*Closeable para podermos imp
          * Aumentar a frequencia permite reduzir os problemas com rebalanceamento devido a quantidade de mensagens */
         properties.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1");/* de uma em uma */
 
+        /* Define o que realizar quando não se tem o offset inicial ou se o offset atual não existe mais no servidor
+         * neste caso o latest começa no offset mais recente e earlest o mais antigo */
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+
         /* Sobrepondo as properties de acordo com o que é passado na construção do objeto*/
         properties.putAll(overridProperties);
         return properties;
