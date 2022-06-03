@@ -5,6 +5,10 @@ import java.math.BigDecimal;
 /* Classe Order para utilizar como mensagem de envio referente*/
 public class Order {
 
+    public String getOrderId() {
+        return orderId;
+    }
+
     /* Dados da ordem, ID do usuário, ID da ordem e valor da ordem*/
     private final String orderId;
     private final BigDecimal value;
